@@ -1,4 +1,7 @@
-"""The final state of the ImportVisitor after completing exercise 7."""
+"""
+Final state of the ImportVisitor after completing exercise 7.
+https://stefaniemolin.com/ast-workshop/#/exercise-7
+"""
 
 import ast
 import builtins
