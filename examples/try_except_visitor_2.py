@@ -13,6 +13,20 @@ class TryExceptVisitor(ast.NodeVisitor):
         self.generic_visit(node)
 
 
+# Here's an alternative version that uses match/case
+# class TryExceptVisitor(ast.NodeVisitor):
+#     def visit_Try(self, node):
+#         match handlers := node.handlers:
+#             case [*_, ast.AST(body=[*_, ast.Pass()])] if (
+#                 len(handlers) == 1
+#             ):
+#                 print(
+#                     'try/except/pass block on line',
+#                     f'{node.lineno}, use contextlib.suppress',
+#                 )
+#         self.generic_visit(node)
+
+
 if __name__ == '__main__':
     from pathlib import Path
 
