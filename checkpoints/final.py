@@ -42,27 +42,6 @@ class ImportVisitor(ast.NodeVisitor):
             scoped_imports, key=lambda x: x['scope'].count('.')
         )
 
-    def _flag_if_masked(self, name):
-        if len(definitions := self.names_defined[name]) < 2:
-            return
-
-        latest_def = definitions[-1]
-
-        # mark all others still in scope as masked
-        for older_def in definitions[:-1]:
-            if self._is_in_scope(older_def['scope']):
-                older_line = (
-                    f' on line {older_def["line_number"]}'
-                    if older_def['line_number'] is not None
-                    else ''
-                )  # empty for builtins only
-                print(
-                    f'{older_def["type"]} {name}{older_line}',
-                    f'is masked by the {latest_def["type"]}',
-                    'of the same name',
-                    f'on line {latest_def["line_number"]}',
-                )
-
     def _track_name_definition(self, node, name):
         self.names_defined[name].append(
             {
@@ -71,7 +50,6 @@ class ImportVisitor(ast.NodeVisitor):
                 'line_number': node.lineno,
             }
         )
-        self._flag_if_masked(name)
 
     def _visit_import(self, node):
         import_scope = '.'.join(self.stack)
@@ -164,14 +142,7 @@ if __name__ == '__main__':
     import re
     import z
 
-    def dict(): ...
-
-    def test(ast, json):
-        import ast
-        class ast: ...
-        return ast
-
-    def json():
+    def test():
         x = re.compile('x')
         with contextlib.suppress(KeyError):
             del x['key']

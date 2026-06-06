@@ -1,6 +1,6 @@
 """
-ImportVisitor starting point for exercise 7
-https://stefaniemolin.com/ast-workshop/#/exercise-7
+Rough example of attempting the bonus for exercise 6
+https://stefaniemolin.com/ast-workshop/#/exercise-6
 
 The `if __name__ == '__main__'` section below will run the traversal on some sample
 source code (also defined there). You can test your changes by modifying that section
@@ -49,14 +49,46 @@ class ImportVisitor(ast.NodeVisitor):
             scoped_imports, key=lambda x: x['scope'].count('.')
         )
 
+    def _flag_if_masked(self, name):
+        if len(definitions := self.names_defined[name]) < 2:
+            return
+
+        latest_def = definitions[-1]
+
+        # mark all others still in scope as masked
+        for older_def in definitions[:-1]:
+            if self._is_in_scope(older_def['scope']):
+                older_line = (
+                    f' on line {older_def["line_number"]}'
+                    if older_def['line_number'] is not None
+                    else ''
+                )  # empty for builtins only
+                print(
+                    f'{older_def["type"]} {name}{older_line}',
+                    f'is masked by the {latest_def["type"]}',
+                    'of the same name',
+                    f'on line {latest_def["line_number"]}',
+                )
+
     def _track_name_definition(self, node, name):
-        self.names_defined[name].append(
-            {
-                'scope': '.'.join(self.stack),
-                'type': node.__class__.__name__,
-                'line_number': node.lineno,
-            }
-        )
+        match self.names_defined[name]:
+            case [
+                *_,
+                {'scope': scope, 'type': 'arg'},
+            ] if scope == '.'.join(self.stack) and isinstance(
+                node, ast.Name
+            ):
+                # (hack) ignore arg redefinition inside function
+                return
+            case _:
+                self.names_defined[name].append(
+                    {
+                        'scope': '.'.join(self.stack),
+                        'type': node.__class__.__name__,
+                        'line_number': node.lineno,
+                    }
+                )
+                self._flag_if_masked(name)
 
     def _visit_import(self, node):
         import_scope = '.'.join(self.stack)
@@ -123,7 +155,14 @@ if __name__ == '__main__':
     import re
     import z
 
-    def test():
+    def dict(): ...
+
+    def test(ast, json):
+        import ast
+        class ast: ...
+        return ast
+
+    def json():
         x = re.compile('x')
         with contextlib.suppress(KeyError):
             del x['key']
@@ -132,6 +171,20 @@ if __name__ == '__main__':
         x = contextlib = dict()
         with contextlib.suppress(KeyError):
             del x['key']
+
+    x = 1
+    def test_three(x):
+        x = 1
+        x = 2
+        def test_four(x):
+            x = 3
+
+    y = 1
+    class Test:
+        y = 2
+        a = 1
+        def __init__(self):
+            self.a = 2
     """).strip()
 
     print(
@@ -143,5 +196,3 @@ if __name__ == '__main__':
 
     visitor = ImportVisitor(source_code)
     visitor.run()
-    print(f'{len(visitor.names_defined)=}')
-    print(f'{len(visitor.imports_available)=}')
