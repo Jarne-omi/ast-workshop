@@ -40,8 +40,9 @@ class TryExceptTransformer(ast.NodeTransformer):
         self.tree = self.visit(self.tree)
         if self.has_changed:
             self.tree.body = [
-                ast.Import([ast.alias('contextlib')])
-            ] + self.tree.body
+                ast.Import([ast.alias('contextlib')]),
+                *self.tree.body,
+            ]
         return ast.fix_missing_locations(self.tree)
 
 
