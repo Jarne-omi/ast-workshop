@@ -17,11 +17,13 @@ In this workshop, you’ll learn how to use the Python standard library’s `ast
 
 1. Fork and clone this repository: [github.com/stefmolin/ast-workshop](https://github.com/stefmolin/ast-workshop/). If you don't have a GitHub account, you will need to create one to complete this step. Please be sure to check for changes (and sync them) before coming to the workshop.
 
-2. Confirm that you have Python 3.10 or higher installed (3.14 is preferred), as well as a text editor for writing code.
+2. Confirm that you have Python 3.11 or higher installed (3.14 is preferred), as well as a text editor for writing code.
 
-3. Open up these slides in your browser and use the arrow keys to follow along: [stefaniemolin.com/ast-workshop](https://stefaniemolin.com/ast-workshop/).
+3. Install the `ast-explore` tool from [PyPI](https://pypi.org/project/ast-explore/) using the method of your choice (for example, `pip` or `uv`). This is also included as a dependency in the `pyproject.toml` for this repository, so you can simply run `uv sync` or `pip install .` from the cloned repository.
 
-4. Open up the documentation for the `ast` module in your browser to consult during the exercises: [docs.python.org/3/library/ast.html](https://docs.python.org/3/library/ast.html).
+4. Open up these slides in your browser and use the arrow keys to follow along: [stefaniemolin.com/ast-workshop](https://stefaniemolin.com/ast-workshop/).
+
+5. Open up the documentation for the `ast` module in your browser to consult during the exercises: [docs.python.org/3/library/ast.html](https://docs.python.org/3/library/ast.html).
 
 ## About the Author
 
