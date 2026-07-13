@@ -33,7 +33,7 @@ In this workshop, you’ll learn how to use the Python standard library’s `ast
 
 ## Help support this project
 
-Since March 2026, I have dedicated **80+ hours of my personal time** to creating and maintaining this free and open-source workshop. If you can, please consider helping support this project by [sponsoring me on GitHub](https://github.com/sponsors/stefmolin), [buying me a coffee](https://www.buymeacoffee.com/stefanie.molin), or [supporting me on Ko-Fi](https://ko-fi.com/stefaniemolin).
+Since March 2026, I have dedicated **100+ hours of my personal time** to creating and maintaining this free and open-source workshop. If you can, please consider helping support this project by [sponsoring me on GitHub](https://github.com/sponsors/stefmolin), [buying me a coffee](https://www.buymeacoffee.com/stefanie.molin), or [supporting me on Ko-Fi](https://ko-fi.com/stefaniemolin).
 
 ## Licenses
 
