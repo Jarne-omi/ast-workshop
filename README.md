@@ -13,7 +13,7 @@ You’ve likely used a tool like `black`, `flake8`, or `ruff` to lint or format 
 
 In this workshop, you’ll learn how to use the Python standard library’s `ast` module to parse and analyze code. Using just the standard library, we will implement a couple of common checks from scratch, which will give you an idea of how these tools work and help you build the skills and confidence to use ASTs in your own projects.
 
-## Setup Instructions
+## Setup instructions
 
 1. Fork and clone this repository: [github.com/stefmolin/ast-workshop](https://github.com/stefmolin/ast-workshop/). If you don't have a GitHub account, you will need to create one to complete this step. Please be sure to check for changes (and sync them) before coming to the workshop.
 
@@ -25,7 +25,7 @@ In this workshop, you’ll learn how to use the Python standard library’s `ast
 
 5. Open up the documentation for the `ast` module in your browser to consult during the exercises: [docs.python.org/3/library/ast.html](https://docs.python.org/3/library/ast.html).
 
-## About the Author
+## About the author
 
 [![Github Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/stefmolin&style=flat)](https://github.com/sponsors/stefmolin)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-yellow?style=flat&logo=buymeacoffee&logoColor=white&labelColor=yellow&color=gray)](https://www.buymeacoffee.com/stefanie.molin)
