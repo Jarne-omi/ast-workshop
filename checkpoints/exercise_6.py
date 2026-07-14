@@ -63,6 +63,8 @@ class ImportVisitor(ast.NodeVisitor):
                 if alias.name != '*'
             ]
         )
+        for alias in node.names:
+            self._add_name_definition(node, alias.asname or alias.name)
         self.generic_visit(node)
 
     def visit_Import(self, node):
@@ -71,6 +73,27 @@ class ImportVisitor(ast.NodeVisitor):
     def visit_ImportFrom(self, node):
         self._visit_import(node)
 
+    def visit_ClassDef(self, node):
+        self._add_name_definition(node, node.name)
+        self.generic_visit(node)
+
+    def visit_FunctionDef(self, node):
+        self._add_name_definition(node, node.name)
+        self.generic_visit(node)
+
+    def visit_AsyncFunctionDef(self, node):
+        self._add_name_definition(node, node.name)
+        self.generic_visit(node)
+
+    def visit_arg(self, node):
+        self._add_name_definition(node, node.arg)
+        self.generic_visit(node)
+
+    def visit_Name(self, node):
+        if isinstance(node.ctx, ast.Store):
+            self._add_name_definition(node, node.id)
+        self.generic_visit(node)
+
     def generic_visit(self, node):
         if hasattr(node, 'body'):
             # we have entered a new scope
@@ -78,6 +101,16 @@ class ImportVisitor(ast.NodeVisitor):
         super().generic_visit(node)
         if hasattr(node, 'body'):
             self.stack.pop()
+
+    def _add_name_definition(self, node, name):
+        definition_scope = '.'.join(self.stack)
+        self.names_defined[name].append(
+            {
+                'scope': definition_scope,
+                'type': node.__class__.__name__,
+                'line_number': getattr(node, 'lineno', None),
+            }
+        )
 
     def run(self):
         self.visit(self.tree)
@@ -111,3 +144,9 @@ if __name__ == '__main__':
 
     visitor = ImportVisitor(source_code)
     visitor.run()
+
+    print("names_defined keys sample:", sorted(k for k in visitor.names_defined.keys() if k)[:20])
+    print("json defs:", visitor.names_defined["json"])
+    print("ast defs:", visitor.names_defined["ast"])
+    print("x defs:", visitor.names_defined["x"])
+    print("imports_available:", visitor.imports_available)

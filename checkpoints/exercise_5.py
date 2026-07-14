@@ -5,6 +5,40 @@ https://stefaniemolin.com/ast-workshop/#/exercise-5
 The `if __name__ == '__main__'` section below will run the traversal on some sample
 source code (also defined there). You can test your changes by modifying that section
 to include some checks of your changes and then running this script.
+
+Starting from checkpoints/exercise_5.py, write the following methods for the ImportVisitor class to add the functionality to determine which imports are in scope given the current state of the stack during traversal:
+
+    _is_in_scope(self, definition_scope: str) -> bool, which given an import's scope (definition_scope) will return whether it is currently in scope (using the stack)
+    get_in_scope_import(self, name: str) -> dict | None, which will filter the imports_available list down to the import of name that is currently in scope by calling _is_in_scope() and breaking ties by selecting the narrowest scope (e.g., module.x is narrower than module)
+
+Note: We will be using _is_in_scope() later for checking whether other names are in scope, so don't pass in the full import dictionary inside imports_available.
+Example solution
+
+The definition_scope is in scope if the stack starts with that path. We slice the stack and compare the lists for equality instead of comparing strings to avoid any false-positives (e.g., module.a is a substring of module.abc, but they have different scopes):
+
+def _is_in_scope(self, definition_scope: str) -> bool:
+    check_scope = definition_scope.split('.')
+    return self.stack[: len(check_scope)] == check_scope
+
+The get_in_scope_import() method uses _is_in_scope() to filter imports:
+
+def get_in_scope_import(self, name: str) -> dict | None:
+    scoped_imports = [
+        import_info
+        for import_info in self.imports_available
+        if self._is_in_scope(import_info['scope'])
+        and name
+        == (import_info['alias'] or import_info['import'])
+    ]
+ 
+    if not scoped_imports:
+        return None
+ 
+    return max(
+        scoped_imports, key=lambda x: x['scope'].count('.')
+    )
+
+Exercise 5 Starting from checkpoints/exercise_5.py , write the following methods for the ImportVisitor class to add the functionality to determine which imports are in scope given the current state of the stack during traversal: _is_in_scope(self, definition_scope: str) -> bool , which given an import's scope ( definition_scope ) will return whether it is currently in scope (using the stack) get_in_scope_import(self, name: str) -> dict | None , which will filter the imports_available list down to the import of name that is currently in scope by calling _is_in_scope() and breaking ties by selecting the narrowest scope ( e.g. , module.x is narrower than module ) Note: We will be using _is_in_scope() later for checking whether other names are in scope, so don't pass in the full import dictionary inside imports_available .
 """
 
 import ast
@@ -18,10 +52,24 @@ class ImportVisitor(ast.NodeVisitor):
         self.stack = []
 
     def _is_in_scope(self, definition_scope: str) -> bool:
-        pass
+        check_scope = definition_scope.split('.')
+        return self.stack[: len(check_scope)] == check_scope
 
     def get_in_scope_import(self, name: str) -> dict | None:
-        pass
+        scoped_imports = [
+            import_info
+            for import_info in self.imports_available
+            if self._is_in_scope(import_info['scope'])
+            and name
+            == (import_info['alias'] or import_info['import'])
+        ]
+    
+        if not scoped_imports:
+            return None
+    
+        return max(
+            scoped_imports, key=lambda x: x['scope'].count('.')
+        )
 
     def _visit_import(self, node):
         import_scope = '.'.join(self.stack)
@@ -99,10 +147,10 @@ if __name__ == '__main__':
     pprint.pprint(visitor.imports_available)
 
     # TIP: add dummy stack for testing now that imports are processed
-    # visitor.stack = ['module', 'strip_password_three']
+    visitor.stack = ['module', 'strip_password_three']
 
     # you can change the value you pass in here to test the result based on your stack
     # print(visitor.get_in_scope_import('contextlib'))
 
     # same thing here
-    # print(visitor._is_in_scope('module'))
+    print(visitor._is_in_scope('module'))
